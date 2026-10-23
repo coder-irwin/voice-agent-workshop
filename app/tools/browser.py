@@ -84,21 +84,26 @@ class BrowserController:
             self._context.browser.on("disconnected", lambda *_: setattr(self, "_alive", False))
 
     async def close(self):
-        if self._context is not None:
-            try:
-                await self._context.close()
-            except Exception:
-                pass
-            browser = self._context.browser
-            if browser:
+        try:
+            if self._context is not None:
+                browser = getattr(self._context, "browser", None)
                 try:
-                    await browser.close()
+                    await self._context.close()
                 except Exception:
                     pass
-        if self._pw is not None:
-            await self._pw.stop()
-        self._pw = self._context = self._page = None
-        self._alive = False
+                if browser:
+                    try:
+                        await browser.close()
+                    except Exception:
+                        pass
+            if self._pw is not None:
+                try:
+                    await self._pw.stop()
+                except Exception:
+                    pass
+        finally:
+            self._pw = self._context = self._page = None
+            self._alive = False
 
 
 # One shared instance for the whole app

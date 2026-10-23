@@ -28,6 +28,7 @@ Events emitted to client:
 """
 
 import os
+from pathlib import Path
 import time
 import uuid
 import json
@@ -241,9 +242,14 @@ app = FastAPI(title="Voice AI Backend", lifespan=lifespan)
 
 
 # ── Frontend ─────────────────────────────────────────────────────────
+_INDEX_HTML = Path(__file__).resolve().parent.parent / "index.html"
+
+
 @app.get("/")
 async def get_frontend():
-    with open("index.html", "r") as f:
+    if _INDEX_HTML.exists():
+        return HTMLResponse(_INDEX_HTML.read_text(encoding="utf-8"))
+    with open("index.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
 

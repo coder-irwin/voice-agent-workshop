@@ -11,6 +11,7 @@ Algorithm:
 """
 
 import webrtcvad
+import numpy as np
 import logging
 
 logger = logging.getLogger(__name__)
@@ -73,7 +74,6 @@ class EnergyVAD:
                 
                 # Primary Voice Volume Gate
                 if is_active and self.min_volume_threshold > 0:
-                    import numpy as np
                     audio_array = np.frombuffer(frame, dtype=np.int16).astype(np.float32)
                     rms = float(np.sqrt(np.mean(audio_array ** 2)) + 1e-8)
                     if rms < self.min_volume_threshold:

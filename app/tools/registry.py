@@ -19,6 +19,7 @@ That's it — no other file needs to change. See app/tools/my_tools.py.
 
 import asyncio
 import inspect
+import json
 import logging
 from typing import Any, Callable
 
@@ -97,6 +98,11 @@ async def run_tool(name: str, arguments: dict) -> tuple[bool, str]:
 
     fn = entry["fn"]
     allowed = entry["schema"]["function"]["parameters"]["properties"]
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments)
+        except Exception:
+            arguments = {}
     # Drop any argument the LLM made up that the function doesn't accept
     clean_args = {k: v for k, v in (arguments or {}).items() if k in allowed}
     try:
