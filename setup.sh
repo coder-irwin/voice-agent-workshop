@@ -6,10 +6,11 @@ cd "$(dirname "$0")"
 
 say() { printf "\n\033[1;36m▶ %s\033[0m\n" "$1"; }
 
-say "1/6  Checking tools (python 3.11/3.12, ollama, ffmpeg, espeak-ng)"
+say "1/6  Checking tools (python 3.11/3.12, ollama, ffmpeg, espeak-ng, compiler)"
 PY=$(command -v python3.12 || command -v python3.11 || true)
 [ -z "$PY" ] && { echo "❌ Need Python 3.11 or 3.12 (3.13+ breaks webrtcvad). Install: brew install python@3.12"; exit 1; }
 command -v ollama >/dev/null || { echo "❌ Install Ollama first: https://ollama.com/download"; exit 1; }
+command -v gcc >/dev/null || command -v clang >/dev/null || { echo "❌ C compiler (gcc/clang) is required to build webrtcvad & pyaudio. On Ubuntu/Debian/WSL run: sudo apt install -y build-essential python3-dev portaudio19-dev"; exit 1; }
 command -v ffmpeg >/dev/null || echo "⚠️  ffmpeg missing (only needed for voice_test.py): brew install ffmpeg"
 command -v espeak-ng >/dev/null || echo "⚠️  espeak-ng missing (needed by Kokoro voice): brew install espeak-ng"
 

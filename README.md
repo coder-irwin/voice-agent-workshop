@@ -78,7 +78,7 @@ flowchart LR
 | Tool | Why | Mac | Linux (Ubuntu) | Windows |
 |---|---|---|---|---|
 | **Git** | get the code | `brew install git` | `sudo apt install git` | use **WSL2** (Ubuntu), follow the Linux column |
-| **Python 3.12** *(3.11 OK, **not 3.13+**)* | runs the agent | `brew install python@3.12` | `sudo apt install python3.12 python3.12-venv` | inside WSL |
+| **Python 3.12** *(3.11 OK, **not 3.13+**)* | runs the agent | `brew install python@3.12` | `sudo apt install python3.12 python3.12-venv python3-dev build-essential portaudio19-dev` | inside WSL |
 | **Ollama** | the local AI brain | [ollama.com/download](https://ollama.com/download) | `curl -fsSL https://ollama.com/install.sh \| sh` | inside WSL |
 | **ffmpeg + espeak-ng** | audio helpers | `brew install ffmpeg espeak-ng` | `sudo apt install ffmpeg espeak-ng` | inside WSL |
 
