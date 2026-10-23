@@ -8,4 +8,4 @@ if ! curl -s localhost:11434 >/dev/null; then
 fi
 curl -s localhost:11434 >/dev/null || { echo "❌ Could not start Ollama. Open the Ollama app or run: ollama serve"; exit 1; }
 echo "🎙️  Open http://localhost:8000 in Chrome, click 'Start Listening' and talk!"
-exec .venv/bin/python -m uvicorn app.main:app --port 8000
+exec .venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000

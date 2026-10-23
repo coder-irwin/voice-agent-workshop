@@ -35,7 +35,7 @@ OLLAMA_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 ROUTER_PROMPT = (
     "You are the action router of a voice assistant. "
     "If the user asks for something a tool can do (open a website, play a video, search, "
-    "scroll, time...), call the matching tool. "
+    "scroll, time, save/read/clear notes or reminders...), call the matching tool. "
     "Use as FEW tools as possible: one tool is usually enough (to play something on YouTube, "
     "call only play_youtube). "
     "If the user is just chatting or asking a question, do NOT call any tool."
@@ -45,8 +45,8 @@ ROUTER_PROMPT = (
 GATE_PROMPT = (
     "Decide if the user is giving a COMMAND for the computer to carry out right now "
     "(open a website, play a video or song, search the web, scroll, take a screenshot, "
-    "tell the time, roll a dice, ...) or is just talking (greeting, thanks, a question, "
-    "a joke, chit-chat). "
+    "tell the time, roll a dice, save a note, read my notes, clear my notes, remind me, ...) "
+    "or is just talking (greeting, thanks, a question, a joke, chit-chat). "
     'Reply with JSON only: {"command": true} or {"command": false}.'
 )
 
