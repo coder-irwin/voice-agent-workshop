@@ -3,423 +3,1074 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice AI | Realtime Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Voice AI | Next-Gen Realtime Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --accent-color: #3b82f6;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --success-color: #10b981;
-            --ai-color: #8b5cf6;
-            --warning-color: #f59e0b;
-            --partial-color: rgba(59, 130, 246, 0.08);
+            --bg-base: #07090e;
+            --bg-surface: rgba(15, 23, 42, 0.75);
+            --bg-surface-elevated: rgba(30, 41, 59, 0.7);
+            --bg-glass-input: rgba(15, 23, 42, 0.6);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --border-hover: rgba(255, 255, 255, 0.18);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.4);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --ai-accent: #a855f7;
+            
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --radius-full: 9999px;
+            
+            --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 30px -5px rgba(99, 102, 241, 0.25);
+            --blur-val: blur(16px);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-            background-image:
-                radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 40%),
-                radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.15), transparent 40%);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(6, 182, 212, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
         }
 
-        .container { max-width: 800px; width: 100%; margin-top: 1rem; }
+        /* ── Top Navigation Bar ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(7, 9, 14, 0.7);
+            backdrop-filter: var(--blur-val);
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
 
-        header { text-align: center; margin-bottom: 2rem; }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
 
-        h1 {
-            font-size: 2.5rem;
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-md);
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p.subtitle { color: #94a3b8; font-size: 1.05rem; }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        button {
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
+        .brand-badge {
+            font-size: 0.7rem;
             font-weight: 600;
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            padding: 0.2rem 0.55rem;
+            border-radius: var(--radius-full);
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #c7d2fe;
+            margin-left: 0.4rem;
         }
 
-        #startBtn {
-            background-color: var(--accent-color);
-            color: white;
-            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
-        }
-        #startBtn:hover { background-color: #2563eb; transform: translateY(-2px); }
-        #startBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        #stopBtn {
-            background-color: transparent;
-            color: #ef4444;
-            border: 1px solid #ef4444;
-        }
-        #stopBtn:hover { background-color: rgba(239, 68, 68, 0.1); }
-        #stopBtn:disabled { opacity: 0.5; cursor: not-allowed; background-color: transparent; }
-
-        /* ── Status bar ── */
-        .status-bar {
+        .nav-status {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            color: #94a3b8;
         }
 
-        .status-indicator { display: flex; align-items: center; gap: 0.5rem; }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 0.4rem 0.9rem;
+            border-radius: var(--radius-full);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
 
-        .dot {
-            width: 10px; height: 10px;
+        .status-pill .dot {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background-color: #475569;
-            transition: background-color 0.3s ease;
+            background-color: #64748b;
+            box-shadow: none;
+            transition: all 0.3s ease;
         }
-        .dot.connected { background-color: var(--success-color); }
-        .dot.speaking { background-color: var(--warning-color); animation: pulse 1s infinite; }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .status-pill .dot.connected {
+            background-color: var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        .status-pill .dot.speaking {
+            background-color: var(--cyan);
+            box-shadow: 0 0 14px var(--cyan-glow);
+            animation: pulse-ring 1.5s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.35); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
 
         .session-id {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
-            color: #64748b;
-            font-family: monospace;
+            color: var(--text-tertiary);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
         }
 
-        /* ── Partial banner ── */
-        .partial-banner {
-            background: var(--partial-color);
-            border: 1px solid rgba(59, 130, 246, 0.15);
-            border-radius: 10px;
-            padding: 0.6rem 1rem;
-            margin-bottom: 1rem;
-            display: none;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.9rem;
-            color: #93c5fd;
-        }
-        .partial-banner.visible { display: flex; }
-        .partial-text { flex: 1; font-style: italic; }
-        .partial-latency { font-size: 0.75rem; color: #64748b; font-family: monospace; }
-
-        .typing-dots { display: flex; gap: 3px; }
-        .typing-dots span {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: #60a5fa;
-            animation: typing 1.4s infinite ease-in-out both;
-        }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+        /* ── Main Layout Grid ── */
+        .layout-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 1rem auto;
+            padding: 0 1.25rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.2rem;
+            flex: 1;
         }
 
-        /* ── Dashboard ── */
-        .dashboard {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
-            backdrop-filter: blur(10px);
-            display: none;
-            margin-bottom: 1.5rem;
+        @media (max-width: 1024px) {
+            .layout-container {
+                grid-template-columns: 1fr;
+            }
         }
-        .dashboard.visible { display: block; }
-        .dashboard h3 { margin-bottom: 0.8rem; font-size: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;}
-        .metric-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .metric-row:last-child { border-bottom: none; }
-        .metric-row.total { font-weight: bold; color: var(--accent-color); padding-top: 0.8rem; }
-        .metric-val { font-family: monospace; }
 
-        /* ── Control Panel ── */
-        .control-panel {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
-            backdrop-filter: blur(10px);
-            margin-bottom: 1.5rem;
+        /* ── Glass Cards ── */
+        .glass-card {
+            background: var(--bg-surface);
+            backdrop-filter: var(--blur-val);
+            -webkit-backdrop-filter: var(--blur-val);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1rem 1.15rem;
+            box-shadow: var(--shadow-subtle);
+            position: relative;
+        }
+
+        .card-header {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            align-items: center;
             justify-content: space-between;
-            transition: opacity 0.3s ease;
+            margin-bottom: 0.75rem;
         }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ── Pre-session Config Drawer ── */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
         .control-panel.locked {
-            opacity: 0.5;
+            opacity: 0.55;
+            filter: grayscale(0.2);
             pointer-events: none;
+            position: relative;
         }
+
         .control-panel.locked::after {
-            content: '🔒 Config locked during session';
+            content: '🔒 Config Active for Current Session';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 0.8rem;
-            color: #94a3b8;
-            background: rgba(15, 23, 42, 0.9);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-full);
             white-space: nowrap;
         }
+
         .cp-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            flex: 1;
-            min-width: 150px;
-            position: relative;
-        }
-        .cp-group label {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-        }
-        .cp-group select {
-            background: rgba(0, 0, 0, 0.2);
-            color: var(--text-color);
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            padding: 0.5rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .cp-group select:focus {
-            border-color: var(--accent-color);
-        }
-        .cp-group select:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            gap: 0.35rem;
         }
 
-        /* ── Chat box ── */
-        .chat-box {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem;
-            min-height: 200px;
-            max-height: 50vh;
+        .cp-group label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+        }
+
+        .cp-group select {
+            background: var(--bg-glass-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0.6rem 0.8rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 1rem;
+            padding-right: 2rem;
+        }
+
+        .cp-group select:hover:not(:disabled) {
+            border-color: var(--border-hover);
+        }
+
+        .cp-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-glow);
+        }
+
+        /* ── Audio Visualizer Stage ── */
+        .visualizer-stage {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.7) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 0.85rem 1.25rem 0.65rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .visualizer-canvas {
+            width: 100%;
+            height: 54px;
+            display: block;
+        }
+
+        .visualizer-overlay {
+            position: absolute;
+            top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pulse-state-pill {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .pulse-state-pill.listening {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan-glow);
+        }
+
+        .pulse-state-pill.speaking {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: var(--ai-accent);
+            color: var(--ai-accent);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .pulse-state-pill.processing {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* ── Partial Speech Banner ── */
+        .partial-banner {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.85rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .partial-banner.visible {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan-glow);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .partial-text {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #e0e7ff;
+            font-style: italic;
+        }
+
+        .partial-latency {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            background: rgba(6, 182, 212, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ── Conversation Stream (Chat Box) ── */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 280px;
+            max-height: 480px;
             overflow-y: auto;
-            backdrop-filter: blur(10px);
+            padding-right: 0.5rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+        }
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .message {
-            margin-bottom: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            animation: fadeIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding: 0.95rem 1.15rem;
+            border-radius: var(--radius-lg);
+            animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 90%;
+            position: relative;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.user {
-            background: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.15);
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.35) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
         }
 
         .message.ai {
-            background: rgba(139, 92, 246, 0.08);
-            border: 1px solid rgba(139, 92, 246, 0.15);
+            align-self: flex-start;
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.3) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 15px rgba(88, 28, 135, 0.2);
         }
 
         .message-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.3rem;
+            justify-content: space-between;
+            gap: 0.8rem;
         }
 
-        .role {
-            font-weight: 600;
-            font-size: 0.8rem;
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
-        .message.user .role { color: #60a5fa; }
-        .message.ai .role { color: #a78bfa; }
 
-        .latency {
+        .message.user .role-badge {
+            color: #60a5fa;
+        }
+
+        .message.ai .role-badge {
+            color: #c084fc;
+        }
+
+        .message-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .badge-chip {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.72rem;
-            color: #64748b;
-            font-family: monospace;
+            padding: 0.15rem 0.45rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
         }
 
-        .first-token-badge {
-            font-size: 0.72rem;
-            color: var(--success-color);
-            font-family: monospace;
-            margin-right: 0.5rem;
+        .badge-chip.ttft {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
         }
 
-        .text { word-break: break-word; }
+        .badge-chip.total {
+            color: #93c5fd;
+            background: rgba(147, 197, 253, 0.1);
+        }
 
-        /* Streaming AI message cursor */
+        .message-body {
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* ── Action Layer Tool Card ── */
+        .tool-card {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(6, 95, 70, 0.2) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1.15rem;
+            margin: 0.6rem 0;
+            font-size: 0.88rem;
+            color: #ecfdf5;
+            box-shadow: 0 4px 15px rgba(6, 78, 59, 0.2);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .tool-card.failed {
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.35) 0%, rgba(153, 27, 27, 0.2) 100%);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #fef2f2;
+            box-shadow: 0 4px 15px rgba(127, 29, 29, 0.2);
+        }
+
+        .tool-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.35rem;
+        }
+
+        .tool-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: #a7f3d0;
+        }
+
+        .tool-card.failed .tool-name {
+            color: #fca5a5;
+        }
+
+        .tool-ms {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 0, 0, 0.25);
+            color: #6ee7b7;
+        }
+
+        .tool-result {
+            font-size: 0.88rem;
+            color: #d1fae5;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+            padding-left: 1.4rem;
+        }
+
+        .tool-card.failed .tool-result {
+            color: #fecaca;
+        }
+
+        /* ── Streaming Cursor ── */
         .streaming-cursor::after {
             content: '▊';
-            animation: blink 0.7s infinite;
-            color: #a78bfa;
+            animation: cursor-blink 0.8s infinite;
+            color: var(--ai-accent);
+            margin-left: 2px;
         }
-        @keyframes blink {
+
+        @keyframes cursor-blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
 
-        /* Scrollbar */
-        .chat-box::-webkit-scrollbar { width: 8px; }
-        .chat-box::-webkit-scrollbar-track { background: transparent; }
-        .chat-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-        .chat-box::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        /* ── Action Bar / Floating Controls ── */
+        .docked-controls {
+            margin-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
 
-        /* ── 🛠️ Action layer (tool calling) ── */
-        .tool-card {
-            margin: 0.6rem 0; padding: 0.7rem 1rem; border-radius: 12px;
-            background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.35);
-            font-size: 0.9rem; color: #d1fae5;
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
         }
-        .tool-card.failed { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.4); color: #fecaca; }
-        .tool-card .tool-name { font-family: ui-monospace, Menlo, monospace; font-weight: 600; }
-        .tool-card .tool-result { opacity: 0.85; margin-top: 0.25rem; }
-        .tool-card .tool-ms { float: right; opacity: 0.6; font-size: 0.8rem; }
-        .tools-panel { margin-bottom: 1rem; font-size: 0.85rem; color: #9ca3af; }
-        .tools-panel .chip {
-            display: inline-block; margin: 0.15rem 0.25rem 0.15rem 0; padding: 0.15rem 0.6rem;
-            border-radius: 999px; background: rgba(167, 139, 250, 0.15); color: #c4b5fd;
-            font-family: ui-monospace, Menlo, monospace; font-size: 0.78rem; cursor: help;
+
+        .mic-btn-main {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            padding: 0.85rem 1.75rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            flex-shrink: 0;
         }
-        .text-input-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-        .text-input-row input {
-            flex: 1; padding: 0.7rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05); color: inherit; font-size: 0.95rem;
+
+        .mic-btn-main:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
         }
-        .text-input-row button { padding: 0.7rem 1.2rem; }
+
+        .mic-btn-main:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stop-btn-main {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: var(--radius-full);
+            padding: 0.85rem 1.4rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .stop-btn-main:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: #ef4444;
+            color: #fee2e2;
+        }
+
+        .stop-btn-main:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: transparent;
+        }
+
+        .text-input-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-full);
+            padding: 0.35rem 0.5rem 0.35rem 1.15rem;
+            transition: all 0.2s ease;
+        }
+
+        .text-input-wrap:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-glow);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .text-input-wrap input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .text-input-wrap input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .send-pill-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            padding: 0.55rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .send-pill-btn:hover:not(:disabled) {
+            background: #4f46e5;
+        }
+
+        .send-pill-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ── Tools Chips & File Upload Bar ── */
+        .secondary-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+
         .upload-label {
-            padding: 0.55rem 1rem; border-radius: 10px; border: 1px dashed rgba(167,139,250,0.5);
-            color: #c4b5fd; font-size: 0.9rem; cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.45rem 0.95rem;
+            border-radius: var(--radius-full);
+            border: 1px dashed rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.08);
+            color: #d8b4fe;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .upload-label.disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .upload-label:hover:not(.disabled) {
+            background: rgba(168, 85, 247, 0.18);
+            border-color: var(--ai-accent);
+        }
+
+        .upload-label.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .quick-suggestions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            overflow-x: auto;
+            max-width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .suggestion-chip {
+            padding: 0.25rem 0.7rem;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.35);
+            color: #e0e7ff;
+            transform: translateY(-1px);
+        }
+
+        /* ── Sidebar Panels ── */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .metric-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-row.total {
+            padding-top: 0.85rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .metric-row.total .metric-label {
+            color: #c7d2fe;
+            font-weight: 600;
+        }
+
+        .metric-row.total .metric-val {
+            color: var(--cyan);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* ── Tools Chips in Sidebar ── */
+        .tools-panel {
+            font-size: 0.85rem;
+        }
+
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.65rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-sm);
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            color: #c7d2fe;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: var(--primary);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Empty state */
+        .empty-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-tertiary);
+            text-align: center;
+            gap: 0.6rem;
+        }
+
+        .empty-chat-icon {
+            font-size: 2.2rem;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Realtime Voice AI</h1>
-        <p class="subtitle">Streaming STT → Local LLM → Live Response</p>
-    </header>
-
-    <div class="container">
-
-        <!-- ── Control Panel (PRE-SESSION config) ── -->
-        <div class="control-panel" id="controlPanel" style="position: relative;">
-            <div class="cp-group">
-                <label for="llmSelect">LLM Model</label>
-                <select id="llmSelect"><option>Not connected</option></select>
-            </div>
-            <div class="cp-group">
-                <label for="personaSelect">Persona</label>
-                <select id="personaSelect"><option>Not connected</option></select>
-            </div>
-            <div class="cp-group">
-                <label for="ttsEngineSelect">TTS Engine</label>
-                <select id="ttsEngineSelect"><option>Not connected</option></select>
-            </div>
-            <div class="cp-group">
-                <label for="ttsVoiceSelect">TTS Voice</label>
-                <select id="ttsVoiceSelect"><option>Not connected</option></select>
+    <!-- ── Top Navigation Bar ── -->
+    <header class="navbar">
+        <div class="brand-container">
+            <div class="brand-icon">🎙️</div>
+            <div>
+                <span class="brand-title">Voice AI</span>
+                <span class="brand-badge">Agent 2.0</span>
             </div>
         </div>
 
-        <div class="controls">
-            <button id="startBtn">Start Listening</button>
-            <button id="stopBtn" disabled>Stop</button>
-        </div>
-
-        <div class="status-bar">
-            <div class="status-indicator">
+        <div class="nav-status">
+            <div class="status-pill">
                 <div class="dot" id="statusDot"></div>
                 <span id="statusText">Disconnected</span>
             </div>
             <span class="session-id" id="sessionId" style="display:none;"></span>
         </div>
+    </header>
 
-        <div class="tools-panel" id="toolsPanel" style="display:none;">
-            🛠️ Things I can do (try saying them!): <span id="toolsChips"></span>
-        </div>
+    <!-- ── Main Grid Container ── -->
+    <main class="layout-container">
+        
+        <!-- Left: Primary Agent Console -->
+        <section class="main-column" style="display:flex; flex-direction:column;">
 
-        <div class="text-input-row">
-            <input id="textInput" type="text" placeholder="…or type a command here (e.g. play lofi music on youtube)" disabled>
-            <button id="sendTextBtn" disabled>Send</button>
-        </div>
-        <div class="text-input-row" style="margin-top:-0.5rem;">
-            <label class="upload-label" id="uploadLabel">🎧 No mic? Upload a voice file (wav / mp3 / m4a)
-                <input id="audioFileInput" type="file" accept="audio/*" hidden disabled>
-            </label>
-        </div>
+            <!-- Session Configuration Card -->
+            <div class="glass-card" style="margin-bottom: 1.25rem;">
+                <div class="control-panel" id="controlPanel">
+                    <div class="cp-group">
+                        <label for="llmSelect">LLM Brain Model</label>
+                        <select id="llmSelect"><option>Connecting...</option></select>
+                    </div>
+                    <div class="cp-group">
+                        <label for="personaSelect">Agent Persona</label>
+                        <select id="personaSelect"><option>Connecting...</option></select>
+                    </div>
+                    <div class="cp-group">
+                        <label for="ttsEngineSelect">Voice Engine</label>
+                        <select id="ttsEngineSelect"><option>Connecting...</option></select>
+                    </div>
+                    <div class="cp-group">
+                        <label for="ttsVoiceSelect">Voice Character</label>
+                        <select id="ttsVoiceSelect"><option>Connecting...</option></select>
+                    </div>
+                </div>
+            </div>
 
-        <div class="partial-banner" id="partialBanner">
-            <div class="typing-dots"><span></span><span></span><span></span></div>
-            <span class="partial-text" id="partialText">…</span>
-            <span class="partial-latency" id="partialLatency"></span>
-        </div>
+            <!-- Visualizer Stage -->
+            <div class="visualizer-stage" id="visualizerStage">
+                <div class="visualizer-overlay">
+                    <span class="pulse-state-pill" id="agentStatePill">Ready</span>
+                </div>
+                <canvas id="audioVisualizer" class="visualizer-canvas" height="80"></canvas>
+            </div>
 
-        <div class="dashboard" id="dashboardPanel">
-            <h3>⏱️ Turn Metrics</h3>
-            <div class="metric-row"><span class="metric-label">Speech Duration</span><span class="metric-val" id="mSpeech">-</span></div>
-            <div class="metric-row"><span class="metric-label">STT Latency</span><span class="metric-val" id="mSTT">-</span></div>
-            <div class="metric-row"><span class="metric-label">LLM First Token (TTFT)</span><span class="metric-val" id="mLLM">-</span></div>
-            <div class="metric-row"><span class="metric-label">Audio First Chunk</span><span class="metric-val" id="mTTS">-</span></div>
-            <div class="metric-row total"><span class="metric-label">End-to-End Latency</span><span class="metric-val" id="mTotal">-</span></div>
-        </div>
+            <!-- Partial Streaming Transcript Banner -->
+            <div class="partial-banner" id="partialBanner">
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+                <span class="partial-text" id="partialText">…</span>
+                <span class="partial-latency" id="partialLatency"></span>
+            </div>
 
-        <div class="dashboard" id="sysMetricsPanel" style="display: none; margin-bottom: 1.5rem;">
-            <h3>💻 Live Resources</h3>
-            <div class="metric-row"><span class="metric-label">System CPU</span><span class="metric-val" id="sysCpu">-</span></div>
-            <div class="metric-row"><span class="metric-label">System RAM</span><span class="metric-val" id="sysMem">-</span></div>
-        </div>
+            <!-- Active Conversation Stream -->
+            <div class="glass-card" style="flex:1; display:flex; flex-direction:column;">
+                <div class="card-header">
+                    <span class="card-title">💬 Live Session Feed</span>
+                    <span id="feedCount" style="font-size:0.75rem; color:var(--text-tertiary);">0 turns</span>
+                </div>
+                
+                <div class="chat-container chat-box" id="chatBox">
+                    <div class="empty-chat" id="emptyChatPlaceholder">
+                        <div class="empty-chat-icon">✨</div>
+                        <p style="font-size:0.95rem; font-weight:500;">Click "Start Listening" or type a command</p>
+                        <p style="font-size:0.8rem;">Try: "Open YouTube and play lo-fi music" or "Take a screenshot"</p>
+                    </div>
+                </div>
 
-        <div class="chat-box" id="chatBox"></div>
-    </div>
+                <!-- Docked Controller Bar -->
+                <div class="docked-controls">
+                    <div class="action-row">
+                        <button class="mic-btn-main" id="startBtn">
+                            <span>🎙️ Start Listening</span>
+                        </button>
+                        <button class="stop-btn-main" id="stopBtn" disabled>
+                            <span>⏹ Stop</span>
+                        </button>
+                        
+                        <div class="text-input-wrap">
+                            <input id="textInput" type="text" placeholder="Type a voice command or question… (Press Enter)" disabled>
+                            <button class="send-pill-btn" id="sendTextBtn" disabled>Send</button>
+                        </div>
+                    </div>
 
+                    <div class="secondary-controls">
+                        <div class="quick-suggestions" id="quickSuggestions">
+                            <span class="suggestion-chip" onclick="applySuggestion('Open YouTube and play lo-fi music')">🎵 Play Lo-Fi</span>
+                            <span class="suggestion-chip" onclick="applySuggestion('Search Google for open source AI agents')">🔍 Search Google</span>
+                            <span class="suggestion-chip" onclick="applySuggestion('Take a screenshot')">📸 Screenshot</span>
+                            <span class="suggestion-chip" onclick="applySuggestion('Scroll down')">📜 Scroll</span>
+                            <span class="suggestion-chip" onclick="applySuggestion('What time is it?')">⏱ Time</span>
+                            <span class="suggestion-chip" onclick="applySuggestion('Roll a dice')">🎲 Roll Dice</span>
+                        </div>
+
+                        <label class="upload-label" id="uploadLabel">
+                            <span>🎧 Upload Audio File</span>
+                            <input id="audioFileInput" type="file" accept="audio/*" hidden disabled>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right: Telemetry & Status Sidebar -->
+        <aside class="sidebar">
+
+            <!-- Turn Performance Waterfall -->
+            <div class="glass-card dashboard" id="dashboardPanel" style="display:block;">
+                <div class="card-header">
+                    <span class="card-title">⚡ Turn Metrics</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary);">Real-Time</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Speech Duration</span>
+                    <span class="metric-val" id="mSpeech">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">STT Whisper Latency</span>
+                    <span class="metric-val" id="mSTT">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">LLM First Token (TTFT)</span>
+                    <span class="metric-val" id="mLLM">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">TTS Audio First Chunk</span>
+                    <span class="metric-val" id="mTTS">-</span>
+                </div>
+                <div class="metric-row total">
+                    <span class="metric-label">End-to-End Latency</span>
+                    <span class="metric-val" id="mTotal">-</span>
+                </div>
+            </div>
+
+            <!-- Live Resource Telemetry -->
+            <div class="glass-card dashboard" id="sysMetricsPanel" style="display:block;">
+                <div class="card-header">
+                    <span class="card-title">💻 System Resources</span>
+                    <span style="font-size:0.75rem; color:var(--text-tertiary);">Host Telemetry</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Host CPU</span>
+                    <span class="metric-val" id="sysCpu">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Host Memory</span>
+                    <span class="metric-val" id="sysMem">-</span>
+                </div>
+            </div>
+
+            <!-- Action Tools Palette -->
+            <div class="glass-card tools-panel" id="toolsPanel" style="display:none;">
+                <div class="card-header">
+                    <span class="card-title">🛠️ Active Tools Palette</span>
+                </div>
+                <p style="font-size:0.78rem; color:var(--text-tertiary);">The AI brain can dynamically call these capabilities:</p>
+                <div class="chip-container" id="toolsChips"></div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- ── Interactive Client Logic ── -->
     <script>
         // ── State ──
         let ws = null;
@@ -428,11 +1079,12 @@
         let input = null;
         let globalStream = null;
         let sessionActive = false;
+        let currentMicVolume = 0;
+        let turnCount = 0;
 
-        // TTS voices cache received from server
         let globalTtsVoices = {};
 
-        // ── DOM refs ──
+        // ── DOM Elements ──
         const llmSelect = document.getElementById('llmSelect');
         const personaSelect = document.getElementById('personaSelect');
         const ttsEngineSelect = document.getElementById('ttsEngineSelect');
@@ -448,19 +1100,93 @@
         const partialBanner  = document.getElementById('partialBanner');
         const partialText    = document.getElementById('partialText');
         const partialLatency = document.getElementById('partialLatency');
+        const agentStatePill = document.getElementById('agentStatePill');
+        const emptyChat      = document.getElementById('emptyChatPlaceholder');
+        const feedCount      = document.getElementById('feedCount');
 
-        // ── TTS Playback State ──
+        // ── TTS Audio State ──
         let ttsContext = null;
         let ttsNextStartTime = 0;
         let ttsNodes = [];
 
-        // ── Streaming AI message state ──
+        // ── Streaming Message State ──
         let activeAiMsg = null;
         let activeAiText = null;
 
-        // ── Typed commands (fallback when the room is noisy) ──
+        // ── Canvas Waveform Visualizer ──
+        const canvas = document.getElementById('audioVisualizer');
+        const ctx = canvas.getContext('2d');
+        let visualizerAnimFrame = null;
+        let visualizerState = 'idle'; // idle | listening | processing | speaking
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 80;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let wavePhase = 0;
+        function renderVisualizer() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const w = canvas.width;
+            const h = canvas.height;
+            const midY = h / 2;
+            const bars = 48;
+            const barWidth = (w / bars) * 0.55;
+            const gap = (w / bars) * 0.45;
+
+            wavePhase += 0.05;
+
+            for (let i = 0; i < bars; i++) {
+                const norm = i / bars;
+                let amp = 0.08;
+
+                if (visualizerState === 'listening') {
+                    const noise = Math.sin(wavePhase * 3 + i * 0.5) * 0.5 + 0.5;
+                    amp = Math.max(0.12, (currentMicVolume * 3.5) * noise);
+                } else if (visualizerState === 'speaking') {
+                    amp = (Math.sin(wavePhase * 4 + i * 0.4) * 0.4 + 0.5) * 0.7;
+                } else if (visualizerState === 'processing') {
+                    amp = (Math.sin(wavePhase * 2 + i * 0.25) * 0.5 + 0.5) * 0.25;
+                } else {
+                    amp = (Math.sin(wavePhase + i * 0.2) * 0.5 + 0.5) * 0.08;
+                }
+
+                const barH = Math.max(4, Math.min(h * 0.85, amp * h));
+                const x = i * (barWidth + gap) + gap / 2;
+                const y = midY - barH / 2;
+
+                const grad = ctx.createLinearGradient(0, y, 0, y + barH);
+                if (visualizerState === 'listening') {
+                    grad.addColorStop(0, '#06b6d4');
+                    grad.addColorStop(1, '#3b82f6');
+                } else if (visualizerState === 'speaking') {
+                    grad.addColorStop(0, '#ec4899');
+                    grad.addColorStop(0.5, '#a855f7');
+                    grad.addColorStop(1, '#6366f1');
+                } else if (visualizerState === 'processing') {
+                    grad.addColorStop(0, '#f59e0b');
+                    grad.addColorStop(1, '#d97706');
+                } else {
+                    grad.addColorStop(0, 'rgba(148, 163, 184, 0.3)');
+                    grad.addColorStop(1, 'rgba(99, 102, 241, 0.2)');
+                }
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.roundRect(x, y, barWidth, barH, 4);
+                ctx.fill();
+            }
+
+            visualizerAnimFrame = requestAnimationFrame(renderVisualizer);
+        }
+        renderVisualizer();
+
+        // ── Input Controls ──
         const textInput = document.getElementById('textInput');
         const sendTextBtn = document.getElementById('sendTextBtn');
+
         function sendTyped() {
             const text = textInput.value.trim();
             if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
@@ -470,7 +1196,18 @@
         sendTextBtn.addEventListener('click', sendTyped);
         textInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendTyped(); });
 
-        // ── Voice file upload (works with or without a laptop microphone) ──
+        window.applySuggestion = function(text) {
+            textInput.value = text;
+            if (sessionActive) {
+                sendTyped();
+            } else {
+                startStreaming().then(() => {
+                    setTimeout(() => sendTyped(), 800);
+                });
+            }
+        };
+
+        // ── File Upload ──
         const audioFileInput = document.getElementById('audioFileInput');
         const uploadLabel = document.getElementById('uploadLabel');
         uploadLabel.classList.add('disabled');
@@ -482,8 +1219,11 @@
 
         async function sendAudioFile(file) {
             if (!ws || ws.readyState !== WebSocket.OPEN) return;
-            statusText.textContent = `Playing "${file.name}" to the agent…`;
-            // 1. decode any audio format, 2. resample to 16 kHz mono (what the server expects)
+            statusText.textContent = `Streaming "${file.name}" to agent…`;
+            visualizerState = 'listening';
+            agentStatePill.textContent = 'Audio Uploading';
+            agentStatePill.className = 'pulse-state-pill listening';
+
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
             const decodeCtx = new AudioCtx();
             const decoded = await decodeCtx.decodeAudioData(await file.arrayBuffer());
@@ -501,19 +1241,19 @@
                 }
                 return pcm.buffer;
             };
-            const CHUNK = 2048; // 128 ms, same as the live mic
+
+            const CHUNK = 2048;
             for (let i = 0; i < f32.length && ws && ws.readyState === WebSocket.OPEN; i += CHUNK) {
                 ws.send(toPcm(f32.subarray(i, i + CHUNK)));
                 await new Promise(r => setTimeout(r, 40));
             }
-            // trailing silence so the server notices we stopped talking
             for (let i = 0; i < 16 && ws && ws.readyState === WebSocket.OPEN; i++) {
                 ws.send(new Int16Array(CHUNK).buffer);
                 await new Promise(r => setTimeout(r, 100));
             }
         }
 
-        // ── Control Panel ──
+        // ── Voice Select & Config Lock ──
         ttsEngineSelect.addEventListener('change', (e) => {
             populateVoices(e.target.value);
         });
@@ -537,42 +1277,57 @@
             controlPanel.classList.remove('locked');
         }
 
-        // ── Helpers ──
+        // ── Message Renderers ──
         function appendMessage(role, text, latencyMs, firstTokenMs) {
+            if (emptyChat) emptyChat.style.display = 'none';
+
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${role}`;
 
-            const roleName = role === 'user' ? 'You' : 'AI';
+            const roleLabel = role === 'user' ? '👤 User' : '✨ Assistant';
             let badges = '';
             if (latencyMs != null) {
-                badges += `<span class="latency">⏱️ ${latencyMs}ms</span>`;
+                badges += `<span class="badge-chip total">⏱️ ${latencyMs}ms</span>`;
             }
             if (firstTokenMs != null) {
-                badges += `<span class="first-token-badge">1st token: ${firstTokenMs}ms</span>`;
+                badges += `<span class="badge-chip ttft">⚡ 1st token: ${firstTokenMs}ms</span>`;
             }
 
             msgDiv.innerHTML = `
                 <div class="message-header">
-                    <span class="role">${roleName}</span>
-                    <span>${badges}</span>
+                    <span class="role-badge">${roleLabel}</span>
+                    <div class="message-badges">${badges}</div>
                 </div>
-                <div class="text">${text}</div>
+                <div class="message-body text">${escapeHtml(text)}</div>
             `;
 
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
+            turnCount++;
+            feedCount.textContent = `${turnCount} turn${turnCount === 1 ? '' : 's'}`;
             return msgDiv;
         }
 
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
         function startStreamingAiMessage() {
+            if (emptyChat) emptyChat.style.display = 'none';
+
             const msgDiv = document.createElement('div');
             msgDiv.className = 'message ai streaming';
             msgDiv.innerHTML = `
                 <div class="message-header">
-                    <span class="role">AI</span>
-                    <span class="latency-container"></span>
+                    <span class="role-badge">✨ Assistant</span>
+                    <div class="message-badges latency-container"></div>
                 </div>
-                <div class="text streaming-cursor"></div>
+                <div class="message-body text streaming-cursor"></div>
             `;
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -592,20 +1347,22 @@
             if (!activeAiMsg) return;
 
             activeAiMsg.classList.remove('streaming');
-            activeAiText.classList.remove('streaming-cursor');
+            if (activeAiText) activeAiText.classList.remove('streaming-cursor');
 
             const container = activeAiMsg.querySelector('.latency-container');
             if (container) {
                 let badges = '';
                 if (firstTokenMs != null) {
-                    badges += `<span class="first-token-badge">1st token: ${firstTokenMs}ms</span>`;
+                    badges += `<span class="badge-chip ttft">⚡ 1st: ${firstTokenMs}ms</span>`;
                 }
                 if (totalMs != null) {
-                    badges += `<span class="latency">⏱️ ${totalMs}ms total</span>`;
+                    badges += `<span class="badge-chip total">⏱️ ${totalMs}ms total</span>`;
                 }
                 container.innerHTML = badges;
             }
 
+            turnCount++;
+            feedCount.textContent = `${turnCount} turn${turnCount === 1 ? '' : 's'}`;
             activeAiMsg = null;
             activeAiText = null;
         }
@@ -624,32 +1381,46 @@
 
         function setStatus(state) {
             statusDot.classList.remove('connected', 'speaking');
+            agentStatePill.classList.remove('listening', 'speaking', 'processing');
+
             switch (state) {
                 case 'connected':
                     statusDot.classList.add('connected');
-                    statusText.textContent = 'Connected — waiting for speech';
+                    statusText.textContent = 'Connected — Listening';
+                    agentStatePill.textContent = 'Listening';
+                    agentStatePill.classList.add('listening');
+                    visualizerState = 'listening';
                     break;
                 case 'speaking':
                     statusDot.classList.add('connected', 'speaking');
-                    statusText.textContent = 'Listening…';
+                    statusText.textContent = 'User Speaking…';
+                    agentStatePill.textContent = 'Receiving Speech';
+                    agentStatePill.classList.add('listening');
+                    visualizerState = 'listening';
                     break;
                 case 'processing':
                     statusDot.classList.add('connected');
-                    statusText.textContent = 'Processing…';
+                    statusText.textContent = 'Thinking & Routing…';
+                    agentStatePill.textContent = 'Thinking';
+                    agentStatePill.classList.add('processing');
+                    visualizerState = 'processing';
                     break;
                 case 'streaming':
                     statusDot.classList.add('connected');
-                    statusText.textContent = 'AI responding…';
+                    statusText.textContent = 'Assistant Speaking…';
+                    agentStatePill.textContent = 'Speaking';
+                    agentStatePill.classList.add('speaking');
+                    visualizerState = 'speaking';
                     break;
                 default:
                     statusText.textContent = 'Disconnected';
+                    agentStatePill.textContent = 'Ready';
+                    visualizerState = 'idle';
             }
         }
 
-        // ── TTS Playback ──
-        function initTtsContext(sampleRate) {
-            // Create TTS AudioContext at the CORRECT sample rate
-            // (this avoids resampling distortion)
+        // ── Gapless TTS Audio Playback ──
+        function initTtsContext() {
             if (ttsContext) {
                 ttsContext.close();
             }
@@ -668,8 +1439,6 @@
 
         function scheduleAudioChunk(base64Data, sampleRate) {
             if (!ttsContext) return;
-
-            // Resume if suspended (browser autoplay policy)
             if (ttsContext.state === 'suspended') {
                 ttsContext.resume();
             }
@@ -687,7 +1456,6 @@
                 float32Array[i] = int16Array[i] / 32768.0;
             }
 
-            // Use the EXACT sample rate from the TTS engine (22050 for Piper, 24000 for Kokoro)
             const sr = sampleRate || 22050;
             const audioBuffer = ttsContext.createBuffer(1, float32Array.length, sr);
             audioBuffer.getChannelData(0).set(float32Array);
@@ -696,10 +1464,9 @@
             source.buffer = audioBuffer;
             source.connect(ttsContext.destination);
 
-            // Schedule gapless playback
             const now = ttsContext.currentTime;
             if (ttsNextStartTime < now) {
-                ttsNextStartTime = now + 0.02; // tiny buffer to avoid clicks
+                ttsNextStartTime = now + 0.02;
             }
 
             source.start(ttsNextStartTime);
@@ -712,7 +1479,7 @@
             };
         }
 
-        // ── Streaming ──
+        // ── WebSocket Session Streaming ──
         async function startStreaming() {
             try {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -726,10 +1493,8 @@
                     textInput.disabled = false; sendTextBtn.disabled = false;
                     audioFileInput.disabled = false; uploadLabel.classList.remove('disabled');
 
-                    // Lock the control panel — no changes during session
                     lockControlPanel();
 
-                    // Send the chosen config to server IMMEDIATELY on connect
                     const config = {
                         type: 'set_config',
                         llm_model: llmSelect.value,
@@ -739,11 +1504,8 @@
                     };
                     ws.send(JSON.stringify(config));
 
-                    // Initialize TTS playback context on user gesture
                     initTtsContext();
 
-                    // No microphone (or permission denied)? Keep the session alive:
-                    // the user can still upload a voice file or type commands.
                     let stream;
                     try {
                         stream = await navigator.mediaDevices.getUserMedia({
@@ -757,8 +1519,8 @@
                             video: false,
                         });
                     } catch (micErr) {
-                        console.warn('No microphone available:', micErr);
-                        statusText.textContent = 'No microphone — upload a voice file or type a command';
+                        console.warn('Microphone permission denied or not found:', micErr);
+                        statusText.textContent = 'No mic — use text or upload voice audio';
                         return;
                     }
                     globalStream = stream;
@@ -767,12 +1529,19 @@
                     audioContext = new AudioCtx({ sampleRate: 16000 });
                     input = audioContext.createMediaStreamSource(stream);
 
-                    // 2048 samples @ 16kHz = 128ms chunks
                     processor = audioContext.createScriptProcessor(2048, 1, 1);
 
                     processor.onaudioprocess = (e) => {
                         if (ws && ws.readyState === WebSocket.OPEN) {
                             const f32 = e.inputBuffer.getChannelData(0);
+                            
+                            // Calculate volume level for visualizer
+                            let sum = 0;
+                            for (let i = 0; i < f32.length; i++) {
+                                sum += f32[i] * f32[i];
+                            }
+                            currentMicVolume = Math.sqrt(sum / f32.length);
+
                             const pcm = new Int16Array(f32.length);
                             for (let i = 0; i < f32.length; i++) {
                                 let s = Math.max(-1, Math.min(1, f32[i]));
@@ -791,37 +1560,30 @@
 
                     switch (data.type) {
                         case 'available_models':
-                            // Populate LLM dropdown
                             llmSelect.innerHTML = '';
                             data.llms.forEach(m => {
                                 const opt = document.createElement('option');
-                                opt.value = m;
-                                opt.textContent = m;
+                                opt.value = m; opt.textContent = m;
                                 llmSelect.appendChild(opt);
                             });
 
-                            // Populate Persona dropdown
                             personaSelect.innerHTML = '';
                             if (data.personas) {
                                 data.personas.forEach(p => {
                                     const opt = document.createElement('option');
                                     opt.value = p;
-                                    // Capitalize first letter for premium display label
                                     opt.textContent = p.charAt(0).toUpperCase() + p.slice(1);
                                     personaSelect.appendChild(opt);
                                 });
                             }
 
-                            // Populate TTS Engine dropdown
                             ttsEngineSelect.innerHTML = '';
                             data.tts_engines.forEach(e => {
                                 const opt = document.createElement('option');
-                                opt.value = e;
-                                opt.textContent = e;
+                                opt.value = e; opt.textContent = e.toUpperCase();
                                 ttsEngineSelect.appendChild(opt);
                             });
 
-                            // Cache voices and populate for the first engine
                             globalTtsVoices = data.tts_voices;
                             if (data.tts_engines.length > 0) {
                                 populateVoices(data.tts_engines[0]);
@@ -829,13 +1591,13 @@
                             break;
 
                         case 'session_started':
-                            sessionIdEl.textContent = `Session: ${data.session_id}`;
+                            sessionIdEl.textContent = `ID: ${data.session_id.substring(0, 8)}…`;
                             sessionIdEl.style.display = 'inline';
                             break;
 
                         case 'user_started_speaking':
                             setStatus('speaking');
-                            flushAudioQueue(); // BARGE-IN: stop active TTS instantly
+                            flushAudioQueue(); // Instant barge-in cancellation
                             break;
 
                         case 'partial_transcript':
@@ -852,26 +1614,41 @@
                             chips.innerHTML = '';
                             data.tools.forEach(t => {
                                 const c = document.createElement('span');
-                                c.className = 'chip'; c.textContent = t.name; c.title = t.description;
+                                c.className = 'chip';
+                                c.innerHTML = `<span>⚡</span> <span>${t.name}</span>`;
+                                c.title = t.description;
+                                c.onclick = () => { textInput.value = `run ${t.name}`; textInput.focus(); };
                                 chips.appendChild(c);
                             });
                             document.getElementById('toolsPanel').style.display = 'block';
                             break;
                         }
 
-                        case 'tool_call': window._lastToolArgs = data.arguments; break;
+                        case 'tool_call':
+                            window._lastToolArgs = data.arguments;
+                            break;
 
                         case 'tool_result': {
+                            if (emptyChat) emptyChat.style.display = 'none';
                             data.arguments = data.arguments || window._lastToolArgs;
                             const card = document.createElement('div');
                             card.className = 'tool-card' + (data.ok ? '' : ' failed');
-                            const args = Object.entries(data.arguments || {}).map(([k, v]) => `${k}="${v}"`).join(', ');
-                            card.innerHTML = `<span class="tool-ms">${data.ms}ms</span>
-                                <span class="tool-name">${data.ok ? '🔧' : '❌'} ${data.name}(${args})</span>
-                                <div class="tool-result">${data.result}</div>`;
-                            // show the action card above the AI reply that is being streamed
-                            if (activeAiMsg && activeAiMsg.parentNode === chatBox) chatBox.insertBefore(card, activeAiMsg);
-                            else chatBox.appendChild(card);
+                            const args = Object.entries(data.arguments || {})
+                                .map(([k, v]) => `${k}="${v}"`).join(', ');
+
+                            card.innerHTML = `
+                                <div class="tool-card-head">
+                                    <span class="tool-name">${data.ok ? '✅' : '❌'} ${data.name}(${args})</span>
+                                    <span class="tool-ms">⚡ ${data.ms}ms</span>
+                                </div>
+                                <div class="tool-result">${escapeHtml(String(data.result))}</div>
+                            `;
+
+                            if (activeAiMsg && activeAiMsg.parentNode === chatBox) {
+                                chatBox.insertBefore(card, activeAiMsg);
+                            } else {
+                                chatBox.appendChild(card);
+                            }
                             chatBox.scrollTop = chatBox.scrollHeight;
                             break;
                         }
@@ -891,7 +1668,7 @@
                             if (data.first_token_ms != null && activeAiMsg) {
                                 const container = activeAiMsg.querySelector('.latency-container');
                                 if (container && !container.innerHTML) {
-                                    container.innerHTML = `<span class="first-token-badge">1st token: ${data.first_token_ms}ms</span>`;
+                                    container.innerHTML = `<span class="badge-chip ttft">⚡ 1st: ${data.first_token_ms}ms</span>`;
                                 }
                             }
                             break;
@@ -904,22 +1681,15 @@
                             setStatus('connected');
                             break;
 
-                        case 'assistant_speaking_started':
-                            break;
-
                         case 'assistant_audio_chunk':
                             scheduleAudioChunk(data.audio_b64, data.sample_rate);
-                            break;
-
-                        case 'assistant_speaking_finished':
                             break;
 
                         case 'error':
                             console.error('Server error:', data.message);
                             break;
 
-                        case 'turn_metrics':
-                            document.getElementById('dashboardPanel').classList.add('visible');
+                        case 'turn_metrics': {
                             const m = data.metrics;
                             const speechDur = m.speech_end;
                             const sttLat = m.stt_end && m.speech_end ? m.stt_end - m.speech_end : null;
@@ -933,20 +1703,20 @@
                             document.getElementById('mTTS').textContent = ttsTtfa ? ttsTtfa + 'ms' : '-';
                             document.getElementById('mTotal').textContent = total ? total + 'ms' : '-';
                             break;
+                        }
 
-                        case 'system_metrics':
-                            document.getElementById('sysMetricsPanel').style.display = 'block';
+                        case 'system_metrics': {
                             const cpuEl = document.getElementById('sysCpu');
                             cpuEl.textContent = `${data.cpu_percent}%`;
                             cpuEl.style.color = data.cpu_percent > 80 ? '#ef4444' : (data.cpu_percent > 50 ? '#f59e0b' : '#10b981');
                             document.getElementById('sysMem').textContent = `${data.mem_used_gb} GB (${data.mem_percent}%)`;
                             break;
+                        }
 
                         case 'config_updated':
-                            console.log('Config accepted by server');
+                            console.log('Session config updated');
                             break;
 
-                        // Legacy fallbacks
                         case 'transcript':
                             appendMessage('user', data.text, data.latency_ms);
                             break;
@@ -958,11 +1728,11 @@
                 };
 
                 ws.onclose = () => stopStreaming();
-                ws.onerror = (err) => { console.error("WS error:", err); stopStreaming(); };
+                ws.onerror = (err) => { console.error("WebSocket error:", err); stopStreaming(); };
 
             } catch (err) {
-                console.error("Mic error:", err);
-                alert("Could not access microphone.");
+                console.error("Mic/WS error:", err);
+                alert("Microphone connection failed or permission denied.");
                 stopStreaming();
             }
         }
@@ -985,14 +1755,13 @@
             startBtn.disabled = false;
             stopBtn.disabled = true;
 
-            // Unlock the control panel for reconfiguration
             unlockControlPanel();
         }
 
         startBtn.addEventListener('click', startStreaming);
         stopBtn.addEventListener('click', stopStreaming);
 
-        // ── Pre-fetch available models on page load ──
+        // ── Auto Pre-fetch Models on Page Load ──
         async function prefetchModels() {
             try {
                 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -1003,8 +1772,7 @@
                         llmSelect.innerHTML = '';
                         data.llms.forEach(m => {
                             const opt = document.createElement('option');
-                            opt.value = m;
-                            opt.textContent = m;
+                            opt.value = m; opt.textContent = m;
                             llmSelect.appendChild(opt);
                         });
 
@@ -1021,8 +1789,7 @@
                         ttsEngineSelect.innerHTML = '';
                         data.tts_engines.forEach(e => {
                             const opt = document.createElement('option');
-                            opt.value = e;
-                            opt.textContent = e;
+                            opt.value = e; opt.textContent = e.toUpperCase();
                             ttsEngineSelect.appendChild(opt);
                         });
 
@@ -1031,17 +1798,15 @@
                             populateVoices(data.tts_engines[0]);
                         }
 
-                        // Close the prefetch connection
                         prefetchWs.close();
                     }
                 };
                 prefetchWs.onerror = () => prefetchWs.close();
             } catch (e) {
-                console.warn('Prefetch failed, will populate on connect:', e);
+                console.warn('Prefetch fallback:', e);
             }
         }
 
-        // Auto-prefetch on page load
         prefetchModels();
     </script>
 </body>
