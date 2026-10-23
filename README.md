@@ -120,6 +120,7 @@ Open **http://localhost:8000** in **Chrome**, click **Start Listening**, allow t
 | "Scroll down" | scrolls the page |
 | "Take a screenshot" | saves `screenshots/shot_*.png` |
 | "What time is it?" | tells you the time |
+| "What's the weather in Jalandhar?" | tells you current temperature and conditions |
 | "Roll a dice" | a tiny tool students wrote 🎲 |
 | "How are you?" | just chats — **no** tool is used |
 
